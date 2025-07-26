@@ -155,7 +155,7 @@ public class ChatManager
             {
                 case "📝 Send Message":
                     await SendMessage(chatInfo);
-                    messages.Clear(); // Refresh messages after sending
+                    messages.Clear();
                     break;
 
                 case "📜 Load More Messages":
@@ -215,7 +215,7 @@ public class ChatManager
     {
         var newMessages = new List<MessageInfo>();
 
-        foreach (var messageBase in messagesBases.Reverse()) // Reverse to show oldest first
+        foreach (var messageBase in messagesBases.Reverse())
         {
             if (messageBase is Message msg)
             {
@@ -388,7 +388,7 @@ public class MessageInfo
 {
     public int Id { get; set; }
     public string Text { get; set; } = "";
-    public DateTime Date { get; set; }  // Changed from int to DateTime
+    public DateTime Date { get; set; }
     public long FromId { get; set; }
     public string SenderName { get; set; } = "";
 }

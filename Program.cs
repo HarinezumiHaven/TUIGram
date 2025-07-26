@@ -13,15 +13,15 @@ public class TelegramAuth
     {
         try
         {
-            // Pre-collect all configuration before creating client
+            // Collect all configuration before creating client
             await CollectConfigurationAsync();
             
             AnsiConsole.MarkupLine("[yellow]Connecting to Telegram...[/]");
             
-            // Create client with logging disabled
+            // Create client
             _client = new Client(Config);
             
-            // Disable logging by setting the log level to None or redirecting logs
+            // Disable logging
             WTelegram.Helpers.Log = (level, message) => { }; // Suppress all logs
             
             var user = await _client.LoginUserIfNeeded();
@@ -35,7 +35,7 @@ public class TelegramAuth
         }
     }
 
-    // Pre-collect configuration to avoid interactive prompts during Status
+    // Collect configuration
     private Task CollectConfigurationAsync()
     {
         _configCache["api_id"] = Environment.GetEnvironmentVariable("TELEGRAM_API_ID") 
@@ -51,14 +51,13 @@ public class TelegramAuth
         return Task.CompletedTask;
     }
 
-    // Config method that uses cached values or prompts when needed
     private string? Config(string what)
     {
         // Return cached values if available
         if (_configCache.TryGetValue(what, out string? cachedValue))
             return cachedValue;
 
-        // Handle runtime prompts (verification code, password, etc.)
+        // Handle runtime prompts
         return what switch
         {
             "verification_code" => AnsiConsole.Ask<string>("Enter verification code sent to your Telegram:"),
@@ -78,7 +77,6 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // Suppress WTelegram logging at the very beginning
         WTelegram.Helpers.Log = (level, message) => { };
         
         AnsiConsole.Write(new FigletText("Telegram TUI").LeftJustified().Color(Color.Blue));
@@ -89,7 +87,7 @@ class Program
 
         try
         {
-            // Don't use Status wrapper around authorization since it needs interactive input
+
             bool isAuthorized = await auth.AuthorizeAsync();
 
             if (!isAuthorized)
@@ -121,7 +119,7 @@ class Program
         }
     }
 
-    // Main menu with options
+
     private static async Task ShowMainMenu(Client client)
     {
         while (true)
@@ -156,7 +154,7 @@ class Program
         }
     }
 
-    // Original dialog table view (kept for reference)
+
     private static async Task ShowDialogsTable(Client client)
     {
         try
@@ -174,7 +172,7 @@ class Program
             table.AddColumn("Title/Name");
             table.AddColumn("ID");
 
-            // Handle both dialog types from WTelegramClient
+
             if (dialogsBase is Messages_Dialogs md)
                 AddDialogsToTable(md.dialogs, md.users, md.chats, table);
             else if (dialogsBase is Messages_DialogsSlice mds)
@@ -215,7 +213,7 @@ class Program
         }
     }
 
-    // Extract peer info (type, title, id)
+    // Extract peer info
     private static bool TryGetPeerInfo(object peer, Dictionary<long, User> users, Dictionary<long, ChatBase> chats, out string chatType, out string title, out string id)
     {
         chatType = "Unknown";
@@ -260,7 +258,7 @@ class Program
         }
     }
 
-    // Get chat/channel title
+    // Get chat or channel title
     private static string GetChatTitle(ChatBase chat) => chat switch
     {
         Chat c => c.title,
